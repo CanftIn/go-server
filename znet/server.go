@@ -2,7 +2,8 @@ package znet
 
 import (
 	"CanftIn/go-server/ziface"
-	"golang.org/x/exp/errors/fmt"
+	"errors"
+	"fmt"
 	"net"
 )
 
@@ -18,6 +19,17 @@ type Server struct {
 	IP string
 	// 监听的端口
 	Port int
+}
+
+// 定义当前客户端连接的所绑定的HandleAPI(以后优化为用户自定义方法)
+func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
+	// echo业务
+	fmt.Println("[Conn Handle] CallBackToClient...")
+	if _, err := conn.Write(data[:cnt]); err != nil {
+		fmt.Println("write back buf err ", err)
+		return errors.New("CallBackToClient error")
+	}
+	return nil
 }
 
 func (s *Server) Start() {
@@ -39,6 +51,8 @@ func (s *Server) Start() {
 		}
 
 		fmt.Println("start zinx server succ, ", s.Name, " succ, Listenning...")
+		var cid uint32
+		cid = 0
 
 		for {
 			// 如果有客户端连接，阻塞返回
@@ -48,24 +62,12 @@ func (s *Server) Start() {
 				continue
 			}
 
-			// 已经建立连接，做个512字节长度的echo业务
-			go func() {
-				for {
-					buf := make([]byte, 512)
-					cnt, err := conn.Read(buf)
-					if err != nil {
-						fmt.Println("recv buf err ", err)
-						continue
-					}
+			// 将处理新连接的业务方法和conn绑定，得到连接模块
+			dealConn := NewConnection(conn, cid, CallBackToClient)
+			cid++
 
-					fmt.Printf("recv client buf %s, cnt %d\n", buf, cnt)
-
-					// echo
-					if _, err := conn.Write(buf[:cnt]); err != nil {
-						fmt.Println("write back buf err ", err)
-					}
-				}
-			}()
+			// 启动当前连接业务
+			go dealConn.Start()
 		}
 
 	}()
