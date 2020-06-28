@@ -6,7 +6,9 @@ import (
 	"net"
 )
 
-// IServer 实现
+/*
+	iserver 实现
+ */
 type Server struct {
 	// 名称
 	Name string
