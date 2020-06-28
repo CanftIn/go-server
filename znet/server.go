@@ -2,7 +2,6 @@ package znet
 
 import (
 	"CanftIn/go-server/ziface"
-	"errors"
 	"fmt"
 	"net"
 )
@@ -19,18 +18,10 @@ type Server struct {
 	IP string
 	// 监听的端口
 	Port int
+	// 当前server的router
+	Router ziface.IRouter
 }
 
-// 定义当前客户端连接的所绑定的HandleAPI(以后优化为用户自定义方法)
-func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
-	// echo业务
-	fmt.Println("[Conn Handle] CallBackToClient...")
-	if _, err := conn.Write(data[:cnt]); err != nil {
-		fmt.Println("write back buf err ", err)
-		return errors.New("CallBackToClient error")
-	}
-	return nil
-}
 
 func (s *Server) Start() {
 	fmt.Printf("[Start] Server Listenner at IP: %s, Port %d, is starting. \n", s.IP, s.Port);
@@ -63,7 +54,7 @@ func (s *Server) Start() {
 			}
 
 			// 将处理新连接的业务方法和conn绑定，得到连接模块
-			dealConn := NewConnection(conn, cid, CallBackToClient)
+			dealConn := NewConnection(conn, cid, s.Router)
 			cid++
 
 			// 启动当前连接业务
@@ -89,12 +80,18 @@ func (s *Server) Serve() {
 	}
 }
 
+func (s *Server) AddRouter(router ziface.IRouter) {
+	s.Router = router
+	fmt.Println("Add Router Succ!")
+}
+
 func NewServer(name string) ziface.IServer {
 	s := &Server {
 		Name: name,
 		IPVersion: "tcp4",
 		IP: "0.0.0.0",
 		Port: 9999,
+		Router: nil,
 	}
 	return s
 }
