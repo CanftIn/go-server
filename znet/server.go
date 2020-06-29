@@ -1,6 +1,7 @@
 package znet
 
 import (
+	"CanftIn/go-server/utils"
 	"CanftIn/go-server/ziface"
 	"fmt"
 	"net"
@@ -24,7 +25,12 @@ type Server struct {
 
 
 func (s *Server) Start() {
-	fmt.Printf("[Start] Server Listenner at IP: %s, Port %d, is starting. \n", s.IP, s.Port);
+	fmt.Printf("[zinx] server Name: %s, listenner at IP: %s, Port: %d is starting\n",
+		utils.GlobalObject.Name, utils.GlobalObject.Host, utils.GlobalObject.TcpPort)
+	fmt.Printf("[zinx] Version %s, MaxConn: %d, MaxPackageSize: %d\n",
+		utils.GlobalObject.Version,
+		utils.GlobalObject.MaxConn,
+		utils.GlobalObject.MaxPackageSize)
 
 	go func() {
 		// 获取 socket addr
@@ -87,10 +93,10 @@ func (s *Server) AddRouter(router ziface.IRouter) {
 
 func NewServer(name string) ziface.IServer {
 	s := &Server {
-		Name: name,
+		Name: utils.GlobalObject.Name,
 		IPVersion: "tcp4",
-		IP: "0.0.0.0",
-		Port: 9999,
+		IP: utils.GlobalObject.Host,
+		Port: utils.GlobalObject.TcpPort,
 		Router: nil,
 	}
 	return s
