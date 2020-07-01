@@ -6,14 +6,21 @@ type Message struct {
 	Data    []byte // 消息的内容
 }
 
-
+//创建一个Message消息包
+func NewMsgPackage(id uint32, data []byte) *Message {
+	return &Message{
+		DataLen: uint32(len(data)),
+		ID:      id,
+		Data:    data,
+	}
+}
 
 // 获取消息的ID
 func(m *Message) GetMsgId() uint32 {
 	return m.ID
 }
 // 获取消息的长度
-func(m *Message) GetMsgLen() uint32 {
+func(m *Message) GetDataLen() uint32 {
 	return m.DataLen
 }
 // 获取消息的内容
@@ -26,7 +33,7 @@ func(m *Message) SetMsgId(id uint32) {
 	m.ID = id
 }
 // 设置消息的长度
-func(m *Message) SetMsgLen(len uint32) {
+func(m *Message) SetDataLen(len uint32) {
 	m.DataLen = len
 }
 // 设置消息的内容
