@@ -91,13 +91,12 @@ func (s *Server) AddRouter(router ziface.IRouter) {
 	fmt.Println("Add Router Succ!")
 }
 
-func NewServer(name string) ziface.IServer {
-	s := &Server {
-		Name: utils.GlobalObject.Name,
-		IPVersion: "tcp4",
-		IP: utils.GlobalObject.Host,
-		Port: utils.GlobalObject.TcpPort,
-		Router: nil,
+func NewServer() ziface.IServer {
+	s := &Server{
+		Name:       utils.GlobalObject.Name,
+		IPVersion:  "tcp4",
+		IP:         utils.GlobalObject.Host,
+		Port:       utils.GlobalObject.TcpPort,
 	}
 	return s
 }
