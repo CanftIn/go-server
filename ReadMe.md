@@ -2,6 +2,10 @@
 
 学习zinx的开发流程。
 
+<div align="center">
+	<img src=".github/framework.png" alt="framework" width="500" height="300">
+</div>
+
 - v0.1 完成基本框架结构，实现echo业务。
 
 - v0.2 完成connection模块并与server集成。
@@ -14,4 +18,4 @@
 
 - v0.6 添加消息管理模块，支持多路由业务API调度管理。
 
-
+- TODO v0.7 实现读写分离
